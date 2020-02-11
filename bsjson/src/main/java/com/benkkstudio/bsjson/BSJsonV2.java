@@ -11,22 +11,29 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.benkkstudio.bsjson.Interface.BSJsonV2Listener;
 import com.google.gson.JsonObject;
 
+import androidx.annotation.NonNull;
+
 public class BSJsonV2 {
+    private static final int METHOD_POST = 0;
+    private static final int METHOD_GET = 1;
     private Activity activity;
     private String server;
     private JsonObject jsObj;
     private BSJsonV2Listener bsJsonV2Listener;
     private String purchaseCode;
+    private int method;
     private BSJsonV2(Activity activity,
                    String server,
                    JsonObject jsObj,
                      BSJsonV2Listener bsJsonV2Listener,
-                   String purchaseCode) {
+                   String purchaseCode,
+                     int method) {
         this.activity = activity;
         this.server = server;
         this.jsObj = jsObj;
         this.bsJsonV2Listener = bsJsonV2Listener;
         this.purchaseCode = purchaseCode;
+        this.method = method;
         verifyNow();
     }
 
@@ -53,38 +60,54 @@ public class BSJsonV2 {
 
     private void loadNow() {
         if(jsObj != null){
-            AndroidNetworking.post(server)
-                    .addBodyParameter("data", API.toBase64(jsObj.toString()))
-                    .setPriority(Priority.MEDIUM)
-                    .build()
-                    .getAsString(new StringRequestListener() {
-                        @Override
-                        public void onResponse(String response) {
-                            bsJsonV2Listener.onLoaded(response);
-                        }
+                AndroidNetworking.post(server)
+                        .addBodyParameter("data", API.toBase64(jsObj.toString()))
+                        .setPriority(Priority.MEDIUM)
+                        .build()
+                        .getAsString(new StringRequestListener() {
+                            @Override
+                            public void onResponse(String response) {
+                                bsJsonV2Listener.onLoaded(response);
+                            }
 
-                        @Override
-                        public void onError(ANError error) {
-                            bsJsonV2Listener.onError(error.getErrorBody());
-                        }
-                    });
+                            @Override
+                            public void onError(ANError error) {
+                                bsJsonV2Listener.onError(error.getErrorBody());
+                            }
+                        });
         } else {
-            AndroidNetworking.post(server)
-                    .setPriority(Priority.MEDIUM)
-                    .build()
-                    .getAsString(new StringRequestListener() {
-                        @Override
-                        public void onResponse(String response) {
-                            bsJsonV2Listener.onLoaded(response);
-                        }
+            if(method == METHOD_POST){
+                AndroidNetworking.post(server)
+                        .setPriority(Priority.MEDIUM)
+                        .build()
+                        .getAsString(new StringRequestListener() {
+                            @Override
+                            public void onResponse(String response) {
+                                bsJsonV2Listener.onLoaded(response);
+                            }
 
-                        @Override
-                        public void onError(ANError error) {
-                            bsJsonV2Listener.onError(error.getErrorBody());
-                        }
-                    });
+                            @Override
+                            public void onError(ANError error) {
+                                bsJsonV2Listener.onError(error.getErrorBody());
+                            }
+                        });
+            } else {
+                AndroidNetworking.get(server)
+                        .setPriority(Priority.MEDIUM)
+                        .build()
+                        .getAsString(new StringRequestListener() {
+                            @Override
+                            public void onResponse(String response) {
+                                bsJsonV2Listener.onLoaded(response);
+                            }
+
+                            @Override
+                            public void onError(ANError error) {
+                                bsJsonV2Listener.onError(error.getErrorBody());
+                            }
+                        });
+            }
         }
-
     }
 
     public static class Builder {
@@ -93,12 +116,20 @@ public class BSJsonV2 {
         private JsonObject jsObj;
         private BSJsonV2Listener bsJsonV2Listener;
         private String purchaseCode;
+        private int method;
         public Builder(Activity activity) {
             this.activity = activity;
         }
 
+        @NonNull
         public BSJsonV2.Builder setServer(String server) {
             this.server = server;
+            return this;
+        }
+
+        @NonNull
+        public BSJsonV2.Builder setMethod(int method) {
+            this.method = method;
             return this;
         }
 
@@ -107,18 +138,20 @@ public class BSJsonV2 {
             return this;
         }
 
+        @NonNull
         public BSJsonV2.Builder setPurchaseCode(String purchaseCode) {
             this.purchaseCode = purchaseCode;
             return this;
         }
 
+        @NonNull
         public BSJsonV2.Builder setListener(BSJsonV2Listener bsJsonV2Listener) {
             this.bsJsonV2Listener = bsJsonV2Listener;
             return this;
         }
 
         public BSJsonV2 load() {
-            return new BSJsonV2(activity, server, jsObj, bsJsonV2Listener, purchaseCode);
+            return new BSJsonV2(activity, server, jsObj, bsJsonV2Listener, purchaseCode, method);
         }
     }
 }
