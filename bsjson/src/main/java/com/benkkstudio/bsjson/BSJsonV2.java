@@ -14,8 +14,8 @@ import com.google.gson.JsonObject;
 import androidx.annotation.NonNull;
 
 public class BSJsonV2 {
-    private static final int METHOD_POST = 0;
-    private static final int METHOD_GET = 1;
+    public static final int METHOD_POST = 0;
+    public static final int METHOD_GET = 1;
     private Activity activity;
     private String server;
     private JsonObject jsObj;
