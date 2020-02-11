@@ -52,21 +52,39 @@ public class BSJsonV2 {
     }
 
     private void loadNow() {
-        AndroidNetworking.post(server)
-                .addBodyParameter("data", API.toBase64(jsObj.toString()))
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsString(new StringRequestListener() {
-                    @Override
-                    public void onResponse(String response) {
-                        bsJsonV2Listener.onLoaded(response);
-                    }
+        if(jsObj != null){
+            AndroidNetworking.post(server)
+                    .addBodyParameter("data", API.toBase64(jsObj.toString()))
+                    .setPriority(Priority.MEDIUM)
+                    .build()
+                    .getAsString(new StringRequestListener() {
+                        @Override
+                        public void onResponse(String response) {
+                            bsJsonV2Listener.onLoaded(response);
+                        }
 
-                    @Override
-                    public void onError(ANError error) {
-                        bsJsonV2Listener.onError(error.getErrorBody());
-                    }
-                });
+                        @Override
+                        public void onError(ANError error) {
+                            bsJsonV2Listener.onError(error.getErrorBody());
+                        }
+                    });
+        } else {
+            AndroidNetworking.post(server)
+                    .setPriority(Priority.MEDIUM)
+                    .build()
+                    .getAsString(new StringRequestListener() {
+                        @Override
+                        public void onResponse(String response) {
+                            bsJsonV2Listener.onLoaded(response);
+                        }
+
+                        @Override
+                        public void onError(ANError error) {
+                            bsJsonV2Listener.onError(error.getErrorBody());
+                        }
+                    });
+        }
+
     }
 
     public static class Builder {
