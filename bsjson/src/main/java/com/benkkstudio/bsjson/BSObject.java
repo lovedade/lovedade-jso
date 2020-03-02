@@ -14,6 +14,18 @@ public class BSObject {
         jsObj.addProperty(property, value);
     }
 
+    public void addProperty(String property, Number value){
+        jsObj.addProperty(property, value);
+    }
+
+    public void addProperty(String property, Boolean value){
+        jsObj.addProperty(property, value);
+    }
+
+    public void addProperty(String property, Character value){
+        jsObj.addProperty(property, value);
+    }
+
     public JsonObject getProperty(){
         return jsObj;
     }
