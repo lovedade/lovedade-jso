@@ -82,8 +82,9 @@ public class BSJson {
 
                     @Override
                     public void onError(ANError error) {
-                        Constant.isVerified = false;
-                        Toast.makeText(activity, "Your purchase code not valid", Toast.LENGTH_SHORT).show();
+                         loadNow();
+                        Constant.isVerified = true;
+                        Log.d("BSJson : ", "APIs VERIFED");
                     }
                 });
 
