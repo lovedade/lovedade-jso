@@ -82,7 +82,7 @@ public class BSJson {
 
                     @Override
                     public void onError(ANError error) {
-                         loadNow();
+                             loadNow();
                         Constant.isVerified = true;
                         Log.d("BSJson : ", "APIs VERIFED");
                     }
